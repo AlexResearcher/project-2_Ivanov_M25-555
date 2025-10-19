@@ -19,19 +19,19 @@
 <command> exit - выход из программы
 <command> help - справочная информация 
 
-Введите команду: create_table users name:str age:int is_active:bool
+- Введите команду: create_table users name:str age:int is_active:bool
 Таблица "users" успешно создана со столбцами: ID:int, name:str, age:int, is_active:bool
 
-Введите команду: create_table users name:str
+- Введите команду: create_table users name:str
 Ошибка: Таблица "users" уже существует.
 
-Введите команду: list_tables
-- users
+- Введите команду: list_tables
+users
 
-Введите команду: drop_table users
+- Введите команду: drop_table users
 Таблица "users" успешно удалена.
 
-Введите команду: drop_table products
+- Введите команду: drop_table products
 Ошибка: Таблица "products" не существует.
 
 >>>Введите команду: help
@@ -47,7 +47,7 @@
 <command> exit - выход из программы
 <command> help- справочная информация
 
-Введите команду: insert into users values ("Sergei", 28, true)
+- Введите команду: insert into users values ("Sergei", 28, true)
 Запись с ID=1 успешно добавлена в таблицу "users".
 
 Введите команду: select from users where age = 28
@@ -57,13 +57,13 @@
 | 1  | Sergei | 28  |    True   |
 +----+--------+-----+-----------+
 
-Введите команду: update users set age = 29 where name = "Sergei"
+- Введите команду: update users set age = 29 where name = "Sergei"
 Запись с ID=1 в таблице "users" успешно обновлена.
 
-Введите команду: delete from users where ID = 1
+- Введите команду: delete from users where ID = 1
 Запись с ID=1 успешно удалена из таблицы "users".
 
-Введите команду: info users
+- Введите команду: info users
 Таблица: users
 Столбцы: ID:int, name:str, age:int, is_active:bool
 Количество записей: 0 
