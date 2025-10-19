@@ -34,7 +34,7 @@ users
 - Введите команду: drop_table products
 Ошибка: Таблица "products" не существует.
 
->>>Введите команду: help
+- Введите команду: help
 
 ***Операции с данными***
 Функции:
@@ -50,12 +50,10 @@ users
 - Введите команду: insert into users values ("Sergei", 28, true)
 Запись с ID=1 успешно добавлена в таблицу "users".
 
-Введите команду: select from users where age = 28
-+----+--------+-----+-----------+
-| ID |  name  | age | is_active |
-+----+--------+-----+-----------+
-| 1  | Sergei | 28  |    True   |
-+----+--------+-----+-----------+
+ - Введите команду: select from users where age = 28
+| ID | name   | age | is_active |
+|:---|:-------|:---:|:---------:|
+| 1  | Sergei | 28  | True      |
 
 - Введите команду: update users set age = 29 where name = "Sergei"
 Запись с ID=1 в таблице "users" успешно обновлена.
