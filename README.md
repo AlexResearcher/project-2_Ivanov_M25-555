@@ -80,4 +80,4 @@ https://asciinema.org/a/ab5u4F23FTxgivOS791SJBmrc
 Количество записей: 0 
 
 Пример работы с функциями:
-https://asciinema.org/a/Xn7OUac5DKRMWuYlNLLevu2NW
+https://asciinema.org/a/v2Fh3TDJzo7c9XucJrAhgWGSz
