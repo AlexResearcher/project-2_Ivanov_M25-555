@@ -1,7 +1,8 @@
 from prettytable import PrettyTable
 
+from src.decorators import confirm_action, create_cacher, handle_db_errors, log_time
 from src.primitive_db.utils import load_table_data, save_table_data
-from src.decorators import confirm_action, create_cacher, handle_db_errors, log_time 
+
 
 @handle_db_errors
 def create_table(metadata, table_name, columns):
@@ -168,7 +169,8 @@ def select(table_name, where_clause=None):
     select_cacher = create_cacher()
 
     def fetch_data():
-        """Внутренняя функция для получения данных (вызывается если нет данных в кэше)"""
+        """Внутренняя функция 
+        для получения данных (вызывается если нет данных в кэше)"""
         table_data = load_table_data(table_name)
         
         if where_clause is None:

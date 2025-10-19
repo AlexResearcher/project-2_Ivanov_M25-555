@@ -10,8 +10,8 @@ from src.primitive_db.core import (
     info,
     insert,
     list_tables,
-    update,
     select,
+    update,
 )
 from src.primitive_db.parser import parse_set_clause, parse_values, parse_where_clause
 from src.primitive_db.utils import (
@@ -64,7 +64,8 @@ def run():
             if not user_input:
                 continue
                 
-            # разбиваем команду на аргументы с помощью shlex. Получаем список
+            # разбиваем команду на аргументы с помощью shlex. 
+            # Получаем список
             args = shlex.split(user_input)
             command = args[0]
             
@@ -159,7 +160,6 @@ f'Запись с ID={new_id} успешно добавлена в таблиц�
                     continue
 
                 table_name = args[2]
-                print(table_name)
 
                 if len(args) == 7:
                     where_args = args[4:7]
@@ -219,8 +219,9 @@ f'Запись с ID={updated_id} в таблице {table_name} успешно 
                     if deleted:
                         print(
 f'Запись(и) с ID={deleted} успешно удалена(ы) из таблицы {table_name}.')
-                    else:print(
-f'Удаление не было выполнено.')
+                    else:
+                        print(
+'Удаление не было выполнено.')
                 except Exception as e:
                     print(f"Ошибка: {e}")
                     
