@@ -1,8 +1,9 @@
 from prettytable import PrettyTable
 
 from src.primitive_db.utils import load_table_data, save_table_data
+from src.decorators import confirm_action, create_cacher, handle_db_errors, log_time 
 
-
+@handle_db_errors
 def create_table(metadata, table_name, columns):
     """
     Создает новую таблицу в метаданных
@@ -21,7 +22,7 @@ def create_table(metadata, table_name, columns):
     
     # проверяем корректность типов и формируем список столбцов
     valid_types = {'int', 'str', 'bool'}
-    table_columns = ['ID:int']  # Автоматически добавляем ID
+    table_columns = ['ID:int']  # автоматически добавляем ID
     
     for column in columns:
         if ':' not in column:
@@ -39,6 +40,8 @@ def create_table(metadata, table_name, columns):
     metadata[table_name] = table_columns
     return metadata
 
+@handle_db_errors
+@confirm_action("Удаление таблицы")
 def drop_table(metadata, table_name):
     """
     Удаляет таблицу из метаданных и БД
@@ -51,7 +54,7 @@ def drop_table(metadata, table_name):
         dict: обновленные метаданные
     """
     if table_name not in metadata:
-        raise ValueError(
+        raise KeyError(
 f'Таблица "{table_name}" не существует.'
             )
     
@@ -64,12 +67,13 @@ def list_tables(metadata):
     """
     return list(metadata.keys())
 
+@handle_db_errors
 def validate_data_types(metadata, table_name, values):
     """
     Проверяет соответствие типов данных схеме таблицы
     """
     if table_name not in metadata:
-        raise ValueError(
+        raise KeyError(
 f"Таблица '{table_name}' не существует"
             )
     
@@ -102,13 +106,15 @@ f"Таблица '{table_name}' не существует"
             raise ValueError(
                 f"Столбец '{name}' должен быть boolean"
                 )
-
+        
+@handle_db_errors
+@log_time
 def insert(metadata, table_name, values):
     """
     Создает новую запись в таблице
     """
     if table_name not in metadata:
-        raise ValueError(
+        raise KeyError(
             f"Таблица '{table_name}' не существует"
             )
     
@@ -150,28 +156,41 @@ def insert(metadata, table_name, values):
     
     return new_id
 
+@handle_db_errors
+@log_time
 def select(table_name, where_clause=None):
     """
     Читает записи из таблицы с возможностью фильтрации
+    с кэшированием результатов
     """
-    table_data = load_table_data(table_name)
-    
-    if where_clause is None:
-        return table_data
-    
-    # Фильтруем данные
-    filtered_data = []
-    for record in table_data:
-        match = True
-        for column, value in where_clause.items():
-            if record.get(column) != str(value):
-                match = False
-        if match:
-            filtered_data.append(record)
+    # ключ для кэша на основе параметров запроса
+    cache_key = f"select_{table_name}_{str(where_clause)}"
+    select_cacher = create_cacher()
+
+    def fetch_data():
+        """Внутренняя функция для получения данных (вызывается если нет данных в кэше)"""
+        table_data = load_table_data(table_name)
         
-    return filtered_data
+        if where_clause is None:
+            return table_data
+        
+        # Фильтруем данные
+        filtered_data = []
+        for record in table_data:
+            match = True
+            for column, value in where_clause.items():
+                if record.get(column) != str(value):
+                    match = False
+                    #break
+            if match:
+                filtered_data.append(record)
+                
+        return filtered_data
+    
+    # используем кэшер для получения данных
+    return select_cacher(cache_key, fetch_data)
 
-
+@handle_db_errors
 def update(metadata, table_name, set_clause, where_clause):
     """
     Обновляет записи в таблице
@@ -215,6 +234,8 @@ def update(metadata, table_name, set_clause, where_clause):
     
     return ", ".join(updated_ids)
 
+@handle_db_errors
+@confirm_action("Удаление значений")
 def delete(table_name, where_clause):
     """
     Удаляет записи из таблицы
@@ -241,16 +262,17 @@ def delete(table_name, where_clause):
     
         return ", ".join(deleted_ids)
     else:
-        raise ValueError(
+        raise KeyError(
 "В таблице отсутствуют подходящие данные для удаления"
             )
 
+@handle_db_errors
 def display_table(data, table_name, metadata):
     """
-    Отображает данные в виде красивой таблицы
+    Отображает данные в виде таблицы
     """
     if not data:
-        print("Нет данных для отображения")
+        raise KeyError("Нет данных для отображения")
         return
     
     # Получаем названия столбцов из метаданных
@@ -260,7 +282,7 @@ def display_table(data, table_name, metadata):
                    in table_meta if col.split(":")[0]]
     else:
         # Если метаданных нет
-        raise ValueError(
+        raise KeyError(
 "В файле метаданных отсутствует описание таблицы")
     
     table = PrettyTable()
@@ -272,13 +294,13 @@ def display_table(data, table_name, metadata):
     
     print(table)
 
+@handle_db_errors
 def info(table_name, metadata):
     """
     Выводит информацию о таблице
     """
     if table_name not in metadata:
-        print(f"Таблица '{table_name}' не существует")
-        return
+        raise KeyError(f"Таблица '{table_name}' не существует")
     
     table_meta = metadata[table_name]
     table_data = load_table_data(table_name)

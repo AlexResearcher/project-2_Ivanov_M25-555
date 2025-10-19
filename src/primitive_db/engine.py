@@ -11,11 +11,11 @@ from src.primitive_db.core import (
     insert,
     list_tables,
     update,
+    select,
 )
 from src.primitive_db.parser import parse_set_clause, parse_values, parse_where_clause
 from src.primitive_db.utils import (
     load_metadata,
-    load_table_data,
     save_metadata,
     save_table_data,
 )
@@ -33,7 +33,7 @@ def print_help():
     print("""
 ***Операции с данными***
 Функции:
-<command> insert into <имя_таблицы> values 
+<command> insert into <имя_таблицы> values \
 (<значение1>, <значение2>, ...) - создать запись.
 <command> select from <имя_таблицы> where \
 <столбец> = <значение> - прочитать записи по условию.
@@ -148,7 +148,7 @@ f'Запись с ID={new_id} успешно добавлена в таблиц�
             elif user_input.startswith('select from'):
                 # select from users where age = 28
 
-                # если не прописано условие where
+                # если не правильный вариант без условия where
                 if len(args) < 3:
                     print("Ошибка: Неверный формат команды select")
                     continue
@@ -159,26 +159,16 @@ f'Запись с ID={new_id} успешно добавлена в таблиц�
                     continue
 
                 table_name = args[2]
-                data = load_table_data(table_name)
+                print(table_name)
 
                 if len(args) == 7:
                     where_args = args[4:7]
                     where_clause = parse_where_clause(where_args)
-
-                    display_list = []
-                    for row_dict in data:
-                        for key, value in row_dict.items():
-                            dict_table = {key: str(value)}
-                            if dict_table == where_clause:
-                                display_list.append(row_dict)
-
-                    if display_list:
-                        display_table(display_list, table_name, metadata)
-                    else:
-                        print("Нет данных для отображения")
-
+                    display_list = select(table_name, where_clause)
                 else:
-                    display_table(data, table_name, metadata)
+                    display_list = select(table_name)
+
+                display_table(display_list, table_name, metadata)
             
             elif user_input.startswith('update'):
                 # update users set age = 29 where name = "Sergei"
@@ -226,8 +216,11 @@ f'Запись с ID={updated_id} в таблице {table_name} успешно 
                 
                 try:
                     deleted = delete(table_name, where_clause)
-                    print(
+                    if deleted:
+                        print(
 f'Запись(и) с ID={deleted} успешно удалена(ы) из таблицы {table_name}.')
+                    else:print(
+f'Удаление не было выполнено.')
                 except Exception as e:
                     print(f"Ошибка: {e}")
                     
