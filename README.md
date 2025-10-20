@@ -85,3 +85,33 @@ https://asciinema.org/a/xvBjM8sZ1m16VIAXPqjxvJh2B
 Финальный пример работы:
 https://asciinema.org/a/A9hARcvkEdnhwC0K5kvvbQQpd
 
+
+### Развертывание программы с помощью poetry на Linux
+
+#### Проверка наличия pip и установка при небоходимости
+Убедитесь, что у вас установлен современный pip. Проверьте версию:
+python3 -m pip --version
+
+Обновите pip при необходимости:
+python3 -m pip install --upgrade --user pip
+
+Или установите pip, если его нет:
+sudo apt install python3-pip
+
+#### Установка менеджера пакетов poetry
+Установка:
+sudo apt install python3-poetry
+
+Чтобы виртуальное окружение создавалось в директории проекта, выполните:
+poetry config virtualenvs.in-project true
+
+#### Настройка проекта
+Клонируйте проект локально:
+git clone <repository-url>
+
+#### Установите зависимости проекта и виртуальное окружение
+Выполните команду в директории проекта:
+poetry install
+
+Запустите проект командой:
+poetry run project
