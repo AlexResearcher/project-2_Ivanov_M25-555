@@ -81,3 +81,7 @@ https://asciinema.org/a/v2Fh3TDJzo7c9XucJrAhgWGSz
 
 Пример работы с декораторами:
 https://asciinema.org/a/xvBjM8sZ1m16VIAXPqjxvJh2B
+
+Финальный пример работы:
+https://asciinema.org/a/A9hARcvkEdnhwC0K5kvvbQQpd
+

@@ -16,7 +16,10 @@ def create_table(metadata, table_name, columns):
     
     Returns:
         dict: обновленные метаданные
-    """
+    """    
+    if metadata is None:
+        metadata = {}
+
     # проверяем, существует ли таблица
     if table_name in metadata:
         raise ValueError(f'Таблица "{table_name}" уже существует.')
@@ -24,15 +27,14 @@ def create_table(metadata, table_name, columns):
     # проверяем корректность типов и формируем список столбцов
     valid_types = {'int', 'str', 'bool'}
     table_columns = ['ID:int']  # автоматически добавляем ID
-    
+
     for column in columns:
         if ':' not in column:
             raise ValueError(
                 f'Некорректный формат столбца: {column}')
-        
         col_name, col_type = column.split(':', 1)
         if col_type not in valid_types:
-            raise ValueError(f'Некорректный тип данных: {col_type}.\
+            raise ValueError(f'Некорректный тип данных: {col_type}. \
 Допустимые типы: int, str, bool')
         
         table_columns.append(f'{col_name}:{col_type}')
@@ -84,8 +86,8 @@ f"Таблица '{table_name}' не существует"
                 col.split(":")[0] != 'ID']
     
     if len(values) != len(columns):
-        raise ValueError(f"Ожидается {len(columns)} значений,\
-                          получено {len(values)}")
+        raise ValueError(f"Ожидается {len(columns)} значений, \
+ получено {len(values)}")
     
     for i, (value, column_meta) in enumerate(zip(values, columns)):
         # тип данных столбца, полученный при создании таблицы
@@ -261,7 +263,6 @@ def delete(table_name, where_clause):
     
     if deleted_ids:
         save_table_data(table_name, records_to_keep)
-    
         return ", ".join(deleted_ids)
     else:
         raise KeyError(
